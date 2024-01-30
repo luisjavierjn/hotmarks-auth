@@ -8,6 +8,7 @@ import com.hotmarks.auth.domain.requests.CreateUserRequest;
 import com.hotmarks.auth.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Set;
@@ -18,6 +19,7 @@ import java.util.stream.Collectors;
 public class UserService {
     private final UserRepository userRepository;
     private final ModelMapper modelMapper;
+    private final PasswordEncoder passwordEncoder;
 
     public UserDTO createUser(CreateUserRequest createUserRequest) {
         Set<RoleEntity> roles = createUserRequest.getRoles().stream()
@@ -28,7 +30,7 @@ public class UserService {
 
         UserEntity userEntity = UserEntity.builder()
                 .username(createUserRequest.getUsername())
-                .password(createUserRequest.getPassword())
+                .password(passwordEncoder.encode(createUserRequest.getPassword()))
                 .email(createUserRequest.getEmail())
                 .roles(roles)
                 .build();
